@@ -55,7 +55,7 @@ func Bubble(xs interface{}, f func(interface{}, interface{}) bool) {
 	v := reflect.ValueOf(xs)
 
 	for i, j := v.Len(), 0; i > 1; i, j = j, 0 {
-		for n := 1; n < 1; n++ {
+		for n := 1; n < i; n++ {
 			x, y := v.Index(n).Interface(), v.Index(n-1).Interface()
 			if f(x, y) {
 				v.Index(n).Set(reflect.ValueOf(y))
