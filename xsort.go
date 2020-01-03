@@ -60,6 +60,7 @@ func Bubble(xs interface{}, f func(interface{}, interface{}) bool) {
 			if f(x, y) {
 				v.Index(n).Set(reflect.ValueOf(y))
 				v.Index(n - 1).Set(reflect.ValueOf(x))
+				j = n
 			}
 		}
 	}
