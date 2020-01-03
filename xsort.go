@@ -2,8 +2,22 @@ package xsort
 
 import "reflect"
 
-func Merge(xs interface{}, f func(interface{}, interface{}) bool) {
-	merge := func(left, right reflect.Value) reflect.Value {
+func Merge(xs interface{}, f func(interface{}, interface{}) bool) interface{} {
+	var sort func(reflect.Value) reflect.Value
+	var merge func(reflect.Value, reflect.Value) reflect.Value
+
+	sort = func(xs reflect.Value) reflect.Value {
+		if xs.Len() < 2 {
+			return xs
+		}
+
+		return merge(
+			sort(xs.Slice(0, xs.Len()/2)),
+			sort(xs.Slice(xs.Len()/2, xs.Len())),
+		)
+	}
+
+	merge = func(left, right reflect.Value) reflect.Value {
 		length := left.Len() + right.Len()
 		capacity := left.Cap() + right.Cap()
 		xs := reflect.MakeSlice(left.Type(), length, capacity)
@@ -22,19 +36,7 @@ func Merge(xs interface{}, f func(interface{}, interface{}) bool) {
 		return xs
 	}
 
-	var sort func(reflect.Value) reflect.Value
-	sort = func(xs reflect.Value) reflect.Value {
-		if xs.Len() < 2 {
-			return xs
-		}
-
-		return merge(
-			sort(xs.Slice(0, xs.Len()/2)),
-			sort(xs.Slice(xs.Len()/2, xs.Len())),
-		)
-	}
-
-	xs = sort(reflect.ValueOf(xs)).Interface()
+	return sort(reflect.ValueOf(xs)).Interface()
 }
 
 func Insertion(xs interface{}, f func(interface{}, interface{}) bool) {
