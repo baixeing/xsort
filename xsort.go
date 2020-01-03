@@ -82,3 +82,62 @@ func Selection(xs interface{}, f func(interface{}, interface{}) bool) {
 		v.Index(n).Set(reflect.ValueOf(x))
 	}
 }
+
+func quick(xs []int) []int {
+	if len(xs) < 2 {
+		return xs
+	}
+
+	left, right, middle := []int{}, []int{}, []int{}
+
+	for _, x := range xs {
+		switch {
+		case x < xs[0]:
+			left = append(left, x)
+		case x > xs[0]:
+			right = append(right, x)
+		default:
+			middle = append(middle, x)
+
+		}
+	}
+
+	ys := []int{}
+	ys = append(ys, quick(left)...)
+	ys = append(ys, middle...)
+	ys = append(ys, quick(right)...)
+
+	return ys
+}
+
+func Quick(xs interface{}, f func(interface{}, interface{}) bool) interface{} {
+	var sort func(reflect.Value) reflect.Value
+
+	sort = func(xs reflect.Value) reflect.Value {
+		if xs.Len() < 2 {
+			return xs
+		}
+
+		left := reflect.MakeSlice(xs.Type(), 0, 0)
+		middle := reflect.MakeSlice(xs.Type(), 0, 0)
+		right := reflect.MakeSlice(xs.Type(), 0, 0)
+
+		for i := 0; i < xs.Len(); i++ {
+			switch {
+			case xs.Index(0).Interface() == xs.Index(i).Interface():
+				middle.Set(reflect.Append(middle, xs.Index(i)))
+			case f(xs.Index(0).Interface(), xs.Index(i).Interface()):
+				left.Set(reflect.Append(middle, xs.Index(i)))
+			case !f(xs.Index(0).Interface(), xs.Index(i).Interface()):
+				right.Set(reflect.Append(middle, xs.Index(i)))
+			}
+		}
+
+		ys := reflect.MakeSlice(xs.Type(), 0, 0)
+		ys.Set(reflect.Append(sort(left), middle, sort(right)))
+
+		return ys
+	}
+
+	return sort(reflect.ValueOf(xs)).Interface()
+}
