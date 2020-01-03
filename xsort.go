@@ -65,3 +65,20 @@ func Bubble(xs interface{}, f func(interface{}, interface{}) bool) {
 		}
 	}
 }
+
+func Selection(xs interface{}, f func(interface{}, interface{}) bool) {
+	v := reflect.ValueOf(xs)
+
+	for i := 0; i < v.Len()-1; i++ {
+		n := i
+		for j := i + 1; j < v.Len(); j++ {
+			if f(v.Index(j).Interface(), v.Index(n).Interface()) {
+				n = j
+			}
+		}
+
+		x, y := v.Index(i).Interface(), v.Index(n).Interface()
+		v.Index(i).Set(reflect.ValueOf(y))
+		v.Index(n).Set(reflect.ValueOf(x))
+	}
+}
