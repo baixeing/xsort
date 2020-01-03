@@ -9,7 +9,7 @@ func Merge(xs interface{}, f func(interface{}, interface{}) bool) {
 		xs := reflect.MakeSlice(left.Type(), length, capacity)
 
 		for i := 0; i < length; i++ {
-			v := xs.Index()
+			v := xs.Index(i)
 			if left.Len() > 0 && (right.Len() == 0 || f(left.Index(0).Interface(), right.Index(0).Interface())) {
 				v.Set(left.Index(0))
 				left = left.Slice(1, left.Len())
@@ -22,7 +22,8 @@ func Merge(xs interface{}, f func(interface{}, interface{}) bool) {
 		return xs
 	}
 
-	sort := func(xs reflect.Value) reflect.Value {
+	var sort func(reflect.Value) reflect.Value
+	sort = func(xs reflect.Value) reflect.Value {
 		if xs.Len() < 2 {
 			return xs
 		}
@@ -33,7 +34,7 @@ func Merge(xs interface{}, f func(interface{}, interface{}) bool) {
 		)
 	}
 
-	xs = sort(reflect.ValueOf(xs), f).Interface()
+	xs = sort(reflect.ValueOf(xs)).Interface()
 }
 
 func Insertion(xs interface{}, f func(interface{}, interface{}) bool) {
