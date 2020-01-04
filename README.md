@@ -1,5 +1,7 @@
 # xsort
-### usage
+Simple implementation of sorting algorithms ([bubble](https://en.wikipedia.org/wiki/Bubble_sort), [insertion](https://en.wikipedia.org/wiki/Insertion_sort), [merge](https://en.wikipedia.org/wiki/Merge_sort), [quick](https://en.wikipedia.org/wiki/Quicksort), [selection](https://en.wikipedia.org/wiki/Selection_sort)) in Go (using [reflect](https://golang.org/pkg/reflect/)).
+
+### example (for []int)
 ```go
 package main
 

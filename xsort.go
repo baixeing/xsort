@@ -19,8 +19,7 @@ func Merge(xs interface{}, f func(interface{}, interface{}) bool) interface{} {
 
 	merge = func(left, right reflect.Value) reflect.Value {
 		length := left.Len() + right.Len()
-		capacity := left.Cap() + right.Cap()
-		xs := reflect.MakeSlice(left.Type(), length, capacity)
+		xs := reflect.MakeSlice(left.Type(), length, length)
 
 		for i := 0; i < length; i++ {
 			v := xs.Index(i)
