@@ -2,6 +2,7 @@ package xsort
 
 import (
 	"math/rand"
+	"sort"
 	"testing"
 	"time"
 )
@@ -83,5 +84,20 @@ func BenchmarkSelection(b *testing.B) {
 		b.StartTimer()
 
 		Selection(xs, f)
+	}
+}
+
+func BenchmarkStdSort(b *testing.B) {
+	xs := make([]int, Xsize)
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		shuffle(xs)
+		b.StartTimer()
+
+		sort.Slice(xs, func(i, j int) bool {
+			return xs[i] < xs[j]
+		})
 	}
 }
