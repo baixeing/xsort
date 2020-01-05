@@ -43,11 +43,11 @@ func main() {
 
     f := func(x, y interface{}) bool { return x.(int) < y.(int) }
 
-    xsort.Bubble(bs, f)
-    xsort.Insertion(is, f)
+    xsort.Bubble(bs, func(i, j int) bool { return bs[i] < bs[j] })
+    xsort.Insertion(is, func(i, j int) bool { return is[i] < is[j] })
     ms = xsort.Merge(ms, f).([]int)
     qs = xsort.Quick(qs, f).([]int)
-    xsort.Selection(ss, f)
+    xsort.Selection(ss, func(i, j int) bool { return ss[i] < ss[j] })
 
     fmt.Println("--- sorted ---")
     fmt.Printf("bs = %#+3.1v\n", bs)
