@@ -31,7 +31,7 @@ func BenchmarkBubble(b *testing.B) {
 		shuffle(xs)
 		b.StartTimer()
 
-		Bubble(xs, f)
+		Bubble(xs, func(i, j int) bool { return xs[i] < xs[j] })
 	}
 }
 
@@ -44,7 +44,7 @@ func BenchmarkInsertion(b *testing.B) {
 		shuffle(xs)
 		b.StartTimer()
 
-		Insertion(xs, f)
+		Insertion(xs, func(i, j int) bool { return xs[i] < xs[j] })
 	}
 }
 
@@ -83,7 +83,7 @@ func BenchmarkSelection(b *testing.B) {
 		shuffle(xs)
 		b.StartTimer()
 
-		Selection(xs, f)
+		Selection(xs, func(i, j int) bool { return xs[i] < xs[j] })
 	}
 }
 

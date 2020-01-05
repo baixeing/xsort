@@ -38,47 +38,47 @@ func Merge(xs interface{}, f func(interface{}, interface{}) bool) interface{} {
 	return sort(reflect.ValueOf(xs)).Interface()
 }
 
-func Insertion(xs interface{}, f func(interface{}, interface{}) bool) {
+func Insertion(xs interface{}, f func(int, int) bool) {
 	v := reflect.ValueOf(xs)
+	swap := reflect.Swapper(xs)
+	length := v.Len()
 
-	for i := 0; i < v.Len(); i++ {
-		for j := i; j > 0 && f(v.Index(j).Interface(), v.Index(j-1).Interface()); j-- {
-			x, y := v.Index(j).Interface(), v.Index(j-1).Interface()
-			v.Index(j).Set(reflect.ValueOf(y))
-			v.Index(j - 1).Set(reflect.ValueOf(x))
+	for i := 0; i < length; i++ {
+		for j := i; j > 0 && f(j, j-1); j-- {
+			swap(j, j-1)
 		}
 	}
 }
 
-func Bubble(xs interface{}, f func(interface{}, interface{}) bool) {
+func Bubble(xs interface{}, f func(int, int) bool) {
 	v := reflect.ValueOf(xs)
+	swap := reflect.Swapper(xs)
+	length := v.Len()
 
-	for i, j := v.Len(), 0; i > 1; i, j = j, 0 {
+	for i, j := length, 0; i > 1; i, j = j, 0 {
 		for n := 1; n < i; n++ {
-			x, y := v.Index(n).Interface(), v.Index(n-1).Interface()
-			if f(x, y) {
-				v.Index(n).Set(reflect.ValueOf(y))
-				v.Index(n - 1).Set(reflect.ValueOf(x))
+			if f(n, n-1) {
+				swap(n, n-1)
 				j = n
 			}
 		}
 	}
 }
 
-func Selection(xs interface{}, f func(interface{}, interface{}) bool) {
+func Selection(xs interface{}, f func(int, int) bool) {
 	v := reflect.ValueOf(xs)
+	swap := reflect.Swapper(xs)
+	length := v.Len()
 
-	for i := 0; i < v.Len()-1; i++ {
+	for i := 0; i < length-1; i++ {
 		n := i
-		for j := i + 1; j < v.Len(); j++ {
-			if f(v.Index(j).Interface(), v.Index(n).Interface()) {
+		for j := i + 1; j < length; j++ {
+			if f(j, n) {
 				n = j
 			}
 		}
 
-		x, y := v.Index(i).Interface(), v.Index(n).Interface()
-		v.Index(i).Set(reflect.ValueOf(y))
-		v.Index(n).Set(reflect.ValueOf(x))
+		swap(i, n)
 	}
 }
 
