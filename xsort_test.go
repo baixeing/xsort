@@ -57,7 +57,7 @@ func BenchmarkMerge(b *testing.B) {
 		shuffle(xs)
 		b.StartTimer()
 
-		xs = Merge(xs, f).([]int)
+		Merge(xs, func(i, j int) bool { return xs[i] < xs[j] })
 	}
 }
 

@@ -1,41 +1,54 @@
 package xsort
 
-import "reflect"
+import (
+	"reflect"
+)
 
-func Merge(xs interface{}, f func(interface{}, interface{}) bool) interface{} {
-	var sort func(reflect.Value) reflect.Value
-	var merge func(reflect.Value, reflect.Value) reflect.Value
+func Merge(xs interface{}, f func(int, int) bool) {
+	var sort func(int, int) (int, int)
+	var merge func(int, int, int, int)
 
-	sort = func(xs reflect.Value) reflect.Value {
-		if xs.Len() < 2 {
-			return xs
+	v := reflect.ValueOf(xs)
+	//	swap := reflect.Swapper(xs)
+
+	sort = func(start, end int) (int, int) {
+		length := end - start
+
+		if length < 2 {
+			return start, end
 		}
 
-		return merge(
-			sort(xs.Slice(0, xs.Len()/2)),
-			sort(xs.Slice(xs.Len()/2, xs.Len())),
-		)
+		pivot := start + length/2
+
+		lstart, lend := sort(start, pivot)
+		rstart, rend := sort(pivot, end)
+
+		merge(lstart, lend, rstart, rend)
+
+		return start, end
 	}
 
-	merge = func(left, right reflect.Value) reflect.Value {
-		length := left.Len() + right.Len()
-		xs := reflect.MakeSlice(left.Type(), length, length)
+	merge = func(lstart, lend, rstart, rend int) {
+		start, end := lstart, rend
+		ys := make([]interface{}, end-start, end-start)
 
-		for i := 0; i < length; i++ {
-			v := xs.Index(i)
-			if left.Len() > 0 && (right.Len() == 0 || f(left.Index(0).Interface(), right.Index(0).Interface())) {
-				v.Set(left.Index(0))
-				left = left.Slice(1, left.Len())
-			} else if right.Len() > 0 {
-				v.Set(right.Index(0))
-				right = right.Slice(1, right.Len())
+		for i := 0; i < len(ys); i++ {
+			if lstart < lend && (rstart == rend || f(lstart, rstart)) {
+				ys[i] = v.Index(lstart).Interface()
+				lstart++
+			} else if rstart < rend {
+				ys[i] = v.Index(rstart).Interface()
+				rstart++
 			}
 		}
 
-		return xs
+		for i := start; i < end; i++ {
+			x := v.Index(i)
+			x.Set(reflect.ValueOf(ys[i-start]))
+		}
 	}
 
-	return sort(reflect.ValueOf(xs)).Interface()
+	_, _ = sort(0, v.Len())
 }
 
 func Insertion(xs interface{}, f func(int, int) bool) {
